@@ -1,4 +1,4 @@
-# nerfstudio-method-template
+# nerfstudio-scan-nerf
 Template repository for creating and registering methods in Nerfstudio.
 
 ## File Structure
@@ -22,13 +22,13 @@ Ensure that nerfstudio has been installed according to the [instructions](https:
 
 ```
 conda activate nerfstudio
-cd nerfstudio-method-template/
+cd nerfstudio-scan-nerf/
 pip install -e .
 ns-install-cli
 ```
 
 ## Running the new method
-This repository creates a new Nerfstudio method named "method-template". To train with it, run the command:
+This repository creates a new Nerfstudio method named "scan-nerf". To train with it, run the command:
 ```
-ns-train method-template --data [PATH]
+ns-train scan-nerf --data [PATH]
 ```

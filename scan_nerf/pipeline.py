@@ -7,11 +7,6 @@ from dataclasses import dataclass, field
 from typing import Literal, Optional, Type
 
 import torch.distributed as dist
-from torch.cuda.amp.grad_scaler import GradScaler
-from torch.nn.parallel import DistributedDataParallel as DDP
-
-from method_template.template_datamanager import TemplateDataManagerConfig
-from method_template.template_model import TemplateModel, TemplateModelConfig
 from nerfstudio.data.datamanagers.base_datamanager import (
     DataManager,
     DataManagerConfig,
@@ -21,6 +16,11 @@ from nerfstudio.pipelines.base_pipeline import (
     VanillaPipeline,
     VanillaPipelineConfig,
 )
+from torch.cuda.amp.grad_scaler import GradScaler
+from torch.nn.parallel import DistributedDataParallel as DDP
+
+from scan_nerf.datamanager import TemplateDataManagerConfig
+from scan_nerf.model import TemplateModel, TemplateModelConfig
 
 
 @dataclass
@@ -55,7 +55,10 @@ class TemplatePipeline(VanillaPipeline):
         self.config = config
         self.test_mode = test_mode
         self.datamanager: DataManager = config.datamanager.setup(
-            device=device, test_mode=test_mode, world_size=world_size, local_rank=local_rank
+            device=device,
+            test_mode=test_mode,
+            world_size=world_size,
+            local_rank=local_rank,
         )
         self.datamanager.to(device)
 
@@ -72,6 +75,7 @@ class TemplatePipeline(VanillaPipeline):
         self.world_size = world_size
         if world_size > 1:
             self._model = typing.cast(
-                TemplateModel, DDP(self._model, device_ids=[local_rank], find_unused_parameters=True)
+                TemplateModel,
+                DDP(self._model, device_ids=[local_rank], find_unused_parameters=True),
             )
             dist.barrier(device_ids=[local_rank])
